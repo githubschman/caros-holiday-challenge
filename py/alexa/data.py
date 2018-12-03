@@ -1,5 +1,131 @@
 # -*- coding: utf-8 -*-
 
+HOLIDAYS_LIST = [
+    {
+        'id': 1,
+        'name': 'Houseplant Appreciation Day',
+        'month': 'January',
+        'day': 10,
+        'explanation': 'Houseplant Appreciation Day, also known as Houseplan Memorial Day for some of you heathens, is the day to celebrate your wilting friends who you have barely kept alive over the years.'
+    },
+    {
+        'id': 2,
+        'name': 'Singles Awareness Day',
+        'month': 'February',
+        'day': 15,
+        'explanation': 'abc'
+    },
+    {
+        'id': 3,
+        'name': 'Be Nasty Day',
+        'month': 'March',
+        'day': 8,
+        'explanation': 'abc'
+    },
+    {
+        'id': 4,
+        'name': 'Friday the 13th',
+        'month': 'April',
+        'day': 13,
+        'explanation': 'abc'
+    },
+    {
+        'id': 5,
+        'name': 'Caroline\'s Birthday',
+        'month': 'May',
+        'day': 2,
+        'explanation': 'abc'
+    },
+    {
+        'id': 6,
+        'name': 'National Waffle Iron Da y',
+        'month': 'June',
+        'day': 29,
+        'explanation': 'abc'
+    },
+    {
+        'id': 7,
+        'name': 'National Hot Dog Day',
+        'month': 'July',
+        'day': 18,
+        'explanation': 'abc'
+    },
+    {
+        'id': 8,
+        'name': 'National Left Handers Day',
+        'month': 'August',
+        'day': 13,
+        'explanation': 'abc'
+    },
+    {
+        'id': 9,
+        'name': 'Cheese Pizza Day',
+        'month': 'September',
+        'day': 5,
+        'explanation': 'abc'
+    },
+    {
+        'id': 10,
+        'name': 'World Smile Day',
+        'month': 'October',
+        'day': 5,
+        'explanation': 'abc'
+    },
+    {
+        'id': 11,
+        'name': 'National False Confession Day',
+        'month': 'November',
+        'day': 21,
+        'explanation': 'abc'
+    },
+    {
+        'id': 12,
+        'name': 'Christmas',
+        'month': 'December',
+        'day': 25,
+        'explanation': 'abc'
+    },
+]
+
+QUIZZES_LIST = {
+    1: [
+        {
+            'prompt': 'Which of these plants grows the fastest?',
+            'choices': ['a. orchids', 'b. bamboo', 'c. prickly pears'],
+            'correctSounds': ['b'],
+            'correctIndex': 1,
+            'correctResponse': 'That\'s right. Bamboo can grow up to 35 inches in a single day.',
+            'incorrectResponse': 'Was that really your choice? Anyway, it\'s wrong. The correct answer is bamboo.' 
+        },
+        {
+            'prompt': 'True or false? Houseplants respond positively to music.',
+            'choices': ['true', 'false'],
+            'correctSounds': ['true'],
+            'correctIndex': 0,
+            'correctResponse': 'That\'s actually right. I swear I did not make this one up. Philodendrons love Phil Collins.',
+            'incorrectResponse': 'That is not correct. Plants actually do respond positively to music. Maybe you and your prickly pear just have different tastes.'
+        }
+    ],
+    12: [
+        {
+            'prompt': 'In the song Frosty the Snowman, which of these objects turns Frosty into a sentient snowman?',
+            'choices': ['a. his top hat', 'b. his carrot nose', 'c. his red scarf'],
+            'correctSounds': ['b', 'his top hat', 'b. his top hat', 'top hat'],
+            'correctIndex': 1,
+            'correctResponse': 'That is correct! His top hat brough him to life.',
+            'incorrectResponse': 'What? No! His hat brought him to life!' 
+        },
+        {
+            'prompt': 'How many fruitcakes did Peewee Herman recieve in the movie Peewee\'s Playhouse Christmas Special?',
+            'choices': ['six', 'eight', 'eleven'],
+            'correctSounds': ['eight', 'eight fruitcakes'],
+            'correctIndex': 0,
+            'correctResponse': 'That\'s right, Peewee recieved eight fruitcakes in total, enough to create a fruitcake room!',
+            'incorrectResponse': 'Oh no. Peewee recieved eight fruit cakes during his holiday special. You will recieve a fruitcake in the mail for answering that question wrong.'
+        }
+    ]
+}
+
 STATES_LIST = [
     {
         'abbreviation': 'MS', 'capital': 'Jackson',
@@ -252,15 +378,22 @@ STATES_LIST = [
         'statehood_year': '1820'
     }]
 
-SKILL_TITLE = "United States Quiz Game"
+SKILL_TITLE = "Caro's Holiday Challenge"
 
-WELCOME_MESSAGE = ("Welcome to the United States Quiz Game!  "
-                   "You can ask me about any of the "
-                   "fifty states and their capitals, or you can ask me to "
-                   "start a quiz.  What would you like to do? ")
+WELCOME_MESSAGE = ("Welcome to Caro's Holiday Challenge! "
+                   "Can you beat Caro? Don't plan on it! "
+                   "You only have one shot a month, "
+                   "to compete. So do not miss your chance to blow. "
+                   "Are you ready to compete?")
 
-START_QUIZ_MESSAGE = ("OK.  I will ask you 10 questions about the "
-                      "United States. ")
+ALREADY_QUIZZED = ("You already competed in the {} challenge."
+                    "Your score was {}. Your ranking is now "
+                    "{} out of {}. Great job!")
+
+DAY_OF = ("Because today is the day of {}"
+          "You get ten extra points!")
+
+START_QUIZ_MESSAGE = "Let's get this started. "
 
 EXIT_SKILL_MESSAGE = ("Thank you for playing the United States Quiz Game!  "
                       "Let's play again soon!")
@@ -291,7 +424,7 @@ IMG_PATH = (
 
 USE_CARDS_FLAG = True
 
-MAX_QUESTIONS = 10
+MAX_QUESTIONS = 2
 
 BAD_ANSWER = (
     "I'm sorry. {} is not something I know very much about in this skill.")

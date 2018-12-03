@@ -135,22 +135,36 @@ def get_answer(attr, item):
             __get_attr_for_speech(attr), item["state"], item[attr.lower()])
 
 
-def ask_question(handler_input):
-    # (HandlerInput) -> None
-    """Get a random state and property, return question about it."""
-    random_state = get_random_state(data.STATES_LIST)
-    random_property = get_random_state_property()
-
+def ask_question(handler_input, quiz_id):
+    
     attr = handler_input.attributes_manager.session_attributes
 
-    attr["quiz_item"] = random_state
-    attr["quiz_attr"] = random_property
+    idx = attr["counter"]
+    question = data.QUIZZES_LIST[quiz_id][idx]
+    prompt = question["prompt"]
+    attr["quiz_question"] = question
     attr["counter"] += 1
 
     handler_input.attributes_manager.session_attributes = attr
 
-    return get_question(attr["counter"], random_property, random_state)
+    return get_q(attr["counter"], prompt)
 
+def get_q(counter, prompt):
+    """Return response text for nth question to the user."""
+    return (
+        "Here is question number {}. {}").format(
+        counter,
+        prompt)
+
+def get_bonus_message(holiday_name, is_day):
+    if is_day:
+        bonus_message = "Becaue you are competing in this challenge on the day of this holiday, you will recieve two extra points! "
+    else:
+        bonus_message = "You will not get the two point holiday bonus, because you are not competing on the day of the holiday. "
+    return (
+        "This quiz's holiday is {}. {}").format(
+        holiday_name,
+        bonus_message)
 
 def get_speechcon(correct_answer):
     """Return speechcon corresponding to the boolean answer correctness."""

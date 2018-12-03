@@ -7,6 +7,7 @@
 
 import json
 import logging
+import datetime
 
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.handler_input import HandlerInput
@@ -111,50 +112,40 @@ class QuizHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In QuizHandler")
+
+        #figure out which quiz we're giving
+        fulldate = datetime.date.today()
+        month = fulldate.month
+        day = fulldate.day
+
+        for q in data.HOLIDAYS_LIST:
+            if q["id"] == month:
+                selected_quiz = q
+                break
+        else:
+            selected_quiz = None
+
         attr = handler_input.attributes_manager.session_attributes
         attr["state"] = "QUIZ"
         attr["counter"] = 0
         attr["quiz_score"] = 0
+        attr["selected_quiz"] = selected_quiz
 
-        question = util.ask_question(handler_input)
+        if day == selected_quiz["day"]:
+            today_is_the_day = True
+            attr["quiz_score"] += 2
+        else:
+            today_is_the_day = False
+        
+        # give the player ten points bonus if they are playing on the actual holiday
+        bonus = util.get_bonus_message(
+            selected_quiz["name"],
+            today_is_the_day)
+        
+        question = util.ask_question(handler_input, attr["selected_quiz"]["id"])
         response_builder = handler_input.response_builder
-        response_builder.speak(data.START_QUIZ_MESSAGE + question)
+        response_builder.speak(data.START_QUIZ_MESSAGE + bonus + question)
         response_builder.ask(question)
-
-        if data.USE_CARDS_FLAG:
-            item = attr["quiz_item"]
-            response_builder.set_card(
-                ui.StandardCard(
-                    title="Question #1",
-                    text=data.START_QUIZ_MESSAGE + question,
-                    image=ui.Image(
-                        small_image_url=util.get_small_image(item),
-                        large_image_url=util.get_large_image(item)
-                    )))
-
-        if util.supports_display(handler_input):
-            item = attr["quiz_item"]
-            item_attr = attr["quiz_attr"]
-            title = "Question #{}".format(str(attr["counter"]))
-            background_img = Image(
-                sources=[ImageInstance(
-                    url=util.get_image(
-                        ht=1024, wd=600, label=item["abbreviation"]))])
-            item_list = []
-            for ans in util.get_multiple_choice_answers(
-                    item, item_attr, data.STATES_LIST):
-                item_list.append(ListItem(
-                    token=ans,
-                    text_content=get_plain_text_content(primary_text=ans)))
-
-            response_builder.add_directive(
-                RenderTemplateDirective(
-                    ListTemplate1(
-                        token="Question",
-                        back_button=BackButtonBehavior.HIDDEN,
-                        background_image=background_img,
-                        title=title,
-                        list_items=item_list)))
 
         return response_builder.response
 
@@ -239,10 +230,15 @@ class QuizAnswerHandler(AbstractRequestHandler):
         response_builder = handler_input.response_builder
 
         item = attr["quiz_item"]
+        question = attr["quiz-question"]
         item_attr = attr["quiz_attr"]
-        is_ans_correct = util.compare_token_or_slots(
-            handler_input=handler_input,
-            value=item[item_attr])
+        # is_ans_correct = util.compare_token_or_slots(
+        #     handler_input=handler_input,
+        #     value=item[item_attr])
+
+        is_ans_correct = False
+        if handler_input in question["correctSounds"]:
+            is_ans_corect = True
 
         if is_ans_correct:
             speech = util.get_speechcon(correct_answer=True)
@@ -264,40 +260,6 @@ class QuizAnswerHandler(AbstractRequestHandler):
             # Update item and item_attr for next question
             item = attr["quiz_item"]
             item_attr = attr["quiz_attr"]
-
-            if data.USE_CARDS_FLAG:
-                response_builder.set_card(
-                    ui.StandardCard(
-                        title="Question #{}".format(str(attr["counter"])),
-                        text=question,
-                        image=ui.Image(
-                            small_image_url=util.get_small_image(item),
-                            large_image_url=util.get_large_image(item)
-                        )))
-
-            if util.supports_display(handler_input):
-                title = "Question #{}".format(str(attr["counter"]))
-                background_img = Image(
-                    sources=[ImageInstance(
-                        util.get_image(
-                            ht=1024, wd=600,
-                            label=attr["quiz_item"]["abbreviation"]))])
-                item_list = []
-                for ans in util.get_multiple_choice_answers(
-                        item, item_attr, data.STATES_LIST):
-                    item_list.append(ListItem(
-                        token=ans,
-                        text_content=get_plain_text_content(primary_text=ans)))
-
-                response_builder.add_directive(
-                    RenderTemplateDirective(
-                        ListTemplate1(
-                            token="Question",
-                            back_button=BackButtonBehavior.HIDDEN,
-                            background_image=background_img,
-                            title=title,
-                            list_items=item_list)))
-            return response_builder.speak(speech).ask(reprompt).response
         else:
             # Finished all questions.
             speech += util.get_final_score(attr["quiz_score"], attr["counter"])
