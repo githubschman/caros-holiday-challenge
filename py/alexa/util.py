@@ -4,10 +4,14 @@
 
 import random
 import six
+import logging
 from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_core.utils import is_request_type
 
 from . import data
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def get_random_state(states_list):
@@ -145,6 +149,10 @@ def ask_question(handler_input, quiz_id):
     attr["quiz_question"] = question
     attr["counter"] += 1
 
+    choices = question["choices"]
+    for choice in choices:
+        prompt += choice
+
     handler_input.attributes_manager.session_attributes = attr
 
     return get_q(attr["counter"], prompt)
@@ -156,14 +164,15 @@ def get_q(counter, prompt):
         counter,
         prompt)
 
-def get_bonus_message(holiday_name, is_day):
+def get_bonus_message(holiday_name, holiday_explanation, is_day):
     if is_day:
         bonus_message = "Becaue you are competing in this challenge on the day of this holiday, you will recieve two extra points! "
     else:
         bonus_message = "You will not get the two point holiday bonus, because you are not competing on the day of the holiday. "
     return (
-        "This quiz's holiday is {}. {}").format(
+        "This quiz's holiday is {}. {} {}").format(
         holiday_name,
+        holiday_explanation,
         bonus_message)
 
 def get_speechcon(correct_answer):
@@ -208,17 +217,12 @@ def get_item(slots, states_list):
         return resolved_slot, False
 
 
-def compare_token_or_slots(handler_input, value):
-    """Compare value with slots or token,
-        for display selected event or voice response for quiz answer."""
-    if is_request_type("Display.ElementSelected")(handler_input):
-        return handler_input.request_envelope.request.token == value
-    else:
-        return compare_slots(
-            handler_input.request_envelope.request.intent.slots, value)
+def compare_slots(handler_input, value):
+    return compare_slot(
+        handler_input.request_envelope.request.intent.slots, value)
 
 
-def compare_slots(slots, value):
+def compare_slot(slots, value):
     """Compare slot value to the value provided."""
     for _, slot in six.iteritems(slots):
         if slot.value is not None:

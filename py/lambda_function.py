@@ -90,29 +90,18 @@ class ExitIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        logger.info("In ExitIntentHandler")
         handler_input.response_builder.speak(
             data.EXIT_SKILL_MESSAGE).set_should_end_session(True)
         return handler_input.response_builder.response
 
 
 class QuizHandler(AbstractRequestHandler):
-    """Handler for starting a quiz.
-    The ``handle`` method will initiate a quiz state and build a
-    question randomly from the states data, using the util methods.
-    If the skill can use cards, then the question choices are added to
-    the card and shown in the Response. If the skill uses display,
-    then the question is displayed using RenderTemplates.
-    """
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return (is_intent_name("QuizIntent")(handler_input) or
                 is_intent_name("AMAZON.StartOverIntent")(handler_input))
 
     def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
-        logger.info("In QuizHandler")
-
         #figure out which quiz we're giving
         fulldate = datetime.date.today()
         month = fulldate.month
@@ -137,9 +126,10 @@ class QuizHandler(AbstractRequestHandler):
         else:
             today_is_the_day = False
         
-        # give the player ten points bonus if they are playing on the actual holiday
+        # give the player 2 points bonus if they are playing on the actual holiday
         bonus = util.get_bonus_message(
             selected_quiz["name"],
+            selected_quiz["explanation"],
             today_is_the_day)
         
         question = util.ask_question(handler_input, attr["selected_quiz"]["id"])
@@ -229,66 +219,33 @@ class QuizAnswerHandler(AbstractRequestHandler):
         attr = handler_input.attributes_manager.session_attributes
         response_builder = handler_input.response_builder
 
-        item = attr["quiz_item"]
-        question = attr["quiz-question"]
-        item_attr = attr["quiz_attr"]
-        # is_ans_correct = util.compare_token_or_slots(
-        #     handler_input=handler_input,
-        #     value=item[item_attr])
+        quiz_id = attr["selected_quiz"]["id"]
+        idx = attr["counter"] - 1
+        question = data.QUIZZES_LIST[quiz_id][idx]
 
-        is_ans_correct = False
-        if handler_input in question["correctSounds"]:
-            is_ans_corect = True
+        is_ans_correct = util.compare_slots(handler_input, question["correct"])
 
         if is_ans_correct:
-            speech = util.get_speechcon(correct_answer=True)
+            speech = question["correctResponse"]
             attr["quiz_score"] += 1
             handler_input.attributes_manager.session_attributes = attr
         else:
-            speech = util.get_speechcon(correct_answer=False)
+            speech = question["incorrectResponse"]
 
-        speech += util.get_answer(item_attr, item)
-
-        if attr['counter'] < data.MAX_QUESTIONS:
+        if attr["counter"] < data.MAX_QUESTIONS:
             # Ask another question
             speech += util.get_current_score(
                 attr["quiz_score"], attr["counter"])
-            question = util.ask_question(handler_input)
-            speech += question
-            reprompt = question
-
-            # Update item and item_attr for next question
-            item = attr["quiz_item"]
-            item_attr = attr["quiz_attr"]
+            prompt = util.ask_question(handler_input, quiz_id)
+            speech += prompt
+            reprompt = prompt
+            return response_builder.speak(speech).ask(reprompt).response
         else:
             # Finished all questions.
             speech += util.get_final_score(attr["quiz_score"], attr["counter"])
             speech += data.EXIT_SKILL_MESSAGE
 
             response_builder.set_should_end_session(True)
-
-            if data.USE_CARDS_FLAG:
-                response_builder.set_card(
-                    ui.StandardCard(
-                        title="Final Score".format(str(attr["counter"])),
-                        text=(util.get_final_score(
-                            attr["quiz_score"], attr["counter"]) +
-                              data.EXIT_SKILL_MESSAGE)
-                    ))
-
-            if util.supports_display(handler_input):
-                title = "Thank you for playing"
-                primary_text = get_rich_text_content(
-                    primary_text=util.get_final_score(
-                        attr["quiz_score"], attr["counter"]))
-
-                response_builder.add_directive(
-                    RenderTemplateDirective(
-                        BodyTemplate1(
-                            back_button=BackButtonBehavior.HIDDEN,
-                            title=title,
-                            text_content=primary_text
-                        )))
 
             return response_builder.speak(speech).response
 

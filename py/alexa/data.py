@@ -82,8 +82,8 @@ HOLIDAYS_LIST = [
         'id': 12,
         'name': 'Christmas',
         'month': 'December',
-        'day': 25,
-        'explanation': 'abc'
+        'day': 7,
+        'explanation': 'Christmas is my favorite time of year! '
     },
 ]
 
@@ -92,36 +92,32 @@ QUIZZES_LIST = {
         {
             'prompt': 'Which of these plants grows the fastest?',
             'choices': ['a. orchids', 'b. bamboo', 'c. prickly pears'],
-            'correctSounds': ['b'],
-            'correctIndex': 1,
+            'correct': '1',
             'correctResponse': 'That\'s right. Bamboo can grow up to 35 inches in a single day.',
             'incorrectResponse': 'Was that really your choice? Anyway, it\'s wrong. The correct answer is bamboo.' 
         },
         {
             'prompt': 'True or false? Houseplants respond positively to music.',
             'choices': ['true', 'false'],
-            'correctSounds': ['true'],
-            'correctIndex': 0,
-            'correctResponse': 'That\'s actually right. I swear I did not make this one up. Philodendrons love Phil Collins.',
-            'incorrectResponse': 'That is not correct. Plants actually do respond positively to music. Maybe you and your prickly pear just have different tastes.'
+            'correct': '1',
+            'correctResponse': 'That\'s actually right. I swear I did not make this one up. Philodendrons love Phil Collins. ',
+            'incorrectResponse': 'That is not correct. Plants actually do respond positively to music. Maybe you and your prickly pear just have different tastes. '
         }
     ],
     12: [
         {
             'prompt': 'In the song Frosty the Snowman, which of these objects turns Frosty into a sentient snowman?',
-            'choices': ['a. his top hat', 'b. his carrot nose', 'c. his red scarf'],
-            'correctSounds': ['b', 'his top hat', 'b. his top hat', 'top hat'],
-            'correctIndex': 1,
-            'correctResponse': 'That is correct! His top hat brough him to life.',
-            'incorrectResponse': 'What? No! His hat brought him to life!' 
+            'choices': ['1. his top hat. ', '2. his carrot nose. ', ' Or 3. his red scarf? '],
+            'correct': '1',
+            'correctResponse': 'That is correct! His top hat brough him to life. ',
+            'incorrectResponse': 'What? No! His hat brought him to life! ' 
         },
         {
             'prompt': 'How many fruitcakes did Peewee Herman recieve in the movie Peewee\'s Playhouse Christmas Special?',
-            'choices': ['six', 'eight', 'eleven'],
-            'correctSounds': ['eight', 'eight fruitcakes'],
-            'correctIndex': 0,
-            'correctResponse': 'That\'s right, Peewee recieved eight fruitcakes in total, enough to create a fruitcake room!',
-            'incorrectResponse': 'Oh no. Peewee recieved eight fruit cakes during his holiday special. You will recieve a fruitcake in the mail for answering that question wrong.'
+            'choices': [''],
+            'correct': '8',
+            'correctResponse': 'That\'s right, Peewee recieved eight fruitcakes in total, enough to create a fruitcake room! ',
+            'incorrectResponse': 'Oh no. Peewee recieved eight fruit cakes during his holiday special. You will recieve a fruitcake in the mail for answering that question wrong. '
         }
     ]
 }
@@ -395,28 +391,12 @@ DAY_OF = ("Because today is the day of {}"
 
 START_QUIZ_MESSAGE = "Let's get this started. "
 
-EXIT_SKILL_MESSAGE = ("Thank you for playing the United States Quiz Game!  "
-                      "Let's play again soon!")
+EXIT_SKILL_MESSAGE = ("Thank you for playing Caro's challenge. ")
 
-REPROMPT_SPEECH = "Which other state or capital would you like to know about?"
+REPROMPT_SPEECH = "What?"
 
-HELP_MESSAGE = ("I know lots of things about the United States.  "
-                "You can ask me about a state "
-                "or a capital, and I'll tell you what I know.  "
-                "You can also test your knowledge by asking me to start "
-                "a quiz.  What would you like to do? ")
+HELP_MESSAGE = ("Start the challenge by saying start quiz.  ")
 
-CORRECT_SPEECHCONS = ['Booya', 'All righty', 'Bam', 'Bazinga', 'Bingo',
-                      'Boom', 'Bravo', 'Cha Ching', 'Cheers', 'Dynomite',
-                      'Hip hip hooray', 'Hurrah', 'Hurray', 'Huzzah',
-                      'Oh dear.  Just kidding.  Hurray', 'Kaboom', 'Kaching',
-                      'Oh snap', 'Phew', 'Righto', 'Way to go', 'Well done',
-                      'Whee', 'Woo hoo', 'Yay', 'Wowza', 'Yowsa']
-
-WRONG_SPEECHCONS = ['Argh', 'Aw man', 'Blarg', 'Blast', 'Boo', 'Bummer',
-                    'Darn', "D'oh", 'Dun dun dun', 'Eek', 'Honk', 'Le sigh',
-                    'Mamma mia', 'Oh boy', 'Oh dear', 'Oof', 'Ouch', 'Ruh roh',
-                    'Shucks', 'Uh oh', 'Wah wah', 'Whoops a daisy', 'Yikes']
 
 IMG_PATH = (
     "https://m.media-amazon.com/images/G/01/mobile-apps/dex/alexa/"
