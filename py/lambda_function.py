@@ -19,12 +19,19 @@ from ask_sdk_core.utils import is_intent_name, is_request_type
 from ask_sdk_core.response_helper import (
     get_plain_text_content, get_rich_text_content)
 
+from boto3.dynamodb.conditions import Key, Attr
+import boto3
+from botocore.exceptions import ClientError
+
 from ask_sdk_model.interfaces.display import (
     ImageInstance, Image, RenderTemplateDirective, ListTemplate1,
     BackButtonBehavior, ListItem, BodyTemplate2, BodyTemplate1)
 from ask_sdk_model import ui, Response
 
 from alexa import data, util
+
+dynamodb = boto3.resource('dynamodb', region_name='eu-east-1')
+table = dynamodb.Table('carosholidaychallenge')
 
 
 # Skill Builder object
@@ -34,15 +41,11 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-# Request Handler classes
 class LaunchRequestHandler(AbstractRequestHandler):
-    """Handler for skill launch."""
     def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
         return is_request_type("LaunchRequest")(handler_input)
 
     def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
         logger.info("In LaunchRequestHandler")
         handler_input.response_builder.speak(data.WELCOME_MESSAGE).ask(
             data.HELP_MESSAGE)
@@ -52,7 +55,6 @@ class LaunchRequestHandler(AbstractRequestHandler):
 class SessionEndedRequestHandler(AbstractRequestHandler):
     """Handler for skill session end."""
     def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
         return is_request_type("SessionEndedRequest")(handler_input)
 
     def handle(self, handler_input):
@@ -198,15 +200,6 @@ class DefinitionHandler(AbstractRequestHandler):
 
 
 class QuizAnswerHandler(AbstractRequestHandler):
-    """Handler for answering the quiz.
-    The ``handle`` method will check if the answer specified is correct,
-    by checking if it matches with the corresponding session attribute
-    value. According to the type of answer, alexa responds to the user
-    with either the next question or the final score.
-    Similar to the quiz handler, the question choices are
-    added to the Card or the RenderTemplate after checking if that
-    is supported.
-    """
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes

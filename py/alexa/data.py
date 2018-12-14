@@ -82,7 +82,7 @@ HOLIDAYS_LIST = [
         'id': 12,
         'name': 'Christmas',
         'month': 'December',
-        'day': 7,
+        'day': 14,
         'explanation': 'Christmas is my favorite time of year! '
     },
 ]
