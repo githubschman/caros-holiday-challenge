@@ -373,4 +373,5 @@ sb.add_global_request_interceptor(RequestLogger())
 sb.add_global_response_interceptor(ResponseLogger())
 
 # Expose the lambda handler to register in AWS Lambda.
+# obvs the session is in here. need to maybe leverage lol
 lambda_handler = sb.lambda_handler()
